@@ -1,0 +1,18 @@
+html, body, div, span, iframe,
+p, a, img, ul, li, form, label,
+figure, figcaption, footer, header, nav, section {
+	border: 0;
+	font-size: 1.5;
+	font: inherit;
+	vertical-align: baseline;
+}
+
+body {
+	line-height: 1;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}

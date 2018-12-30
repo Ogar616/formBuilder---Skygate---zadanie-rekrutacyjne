@@ -1,0 +1,56 @@
+body {
+    background-color: lightgrey;
+}
+
+h1 {
+    text-align: center;
+    margin: 2em;
+}
+span {
+    margin: 1em;
+    width: 100px !important;
+}
+
+.form-wrapper {
+    width: 70%;
+    border: 2px solid grey;
+    border-radius: 5px;
+    margin: 1em;
+}
+
+input, select {
+    width: 60%;
+    margin: 1em;
+}
+
+.condition-field {
+    width: 20%;
+    &:first-of-type {
+        width: 35%;
+    }
+}
+
+input.condition-field {
+    width: 20% !important;
+}
+
+.buttons {
+    float: right;
+    justify-content: flex-end;
+}
+
+button {
+    margin: 1em; 
+    position: relative;
+}
+
+.footer {
+    text-align: center;
+    font-size: 1em;
+    margin-top: 6em;
+    .github {
+        width: 1.2em;
+        height: 1.2em;
+        margin-left: 0.5em;
+    }
+}
