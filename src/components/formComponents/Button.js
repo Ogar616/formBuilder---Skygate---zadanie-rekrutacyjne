@@ -1,7 +1,7 @@
 import React from 'react';
 
 const Button = (props) => (
-    <button className="btn">
+    <button type='button' className="btn">
             {props.text}
     </button>
 );
