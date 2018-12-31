@@ -10,39 +10,30 @@ class FormContainer extends Component {
                 {
                     'id': '1',
                     'parentId': '0', 
-                    'type': 'main'
-                      
-                },
-                {   
-                    'id': '2',
-                    'parentId': '1',
-                    'type': 'sub',
-                    'conditiontype': 'Number'
-                },
-                {
-                    'id': '3',
-                    'parentId': '0' ,
-                    'type': 'main'
-                   
-                },
-                {   
-                    'id': '4',
-                    'parentId': '3',
-                    'type': 'sub',
-                    'conditiontype': 'Number'
-                },
-                {   
-                    'id': '5',
-                    'parentId': '3',
-                    'type': 'sub',
-                    'conditiontype': 'Number'
-                },
-
-            ]
+                    'type': 'main'     
+                }
+            ],
+            newInput: {
+                text: '',
+                select: '',
+                firstFieldValue: '',
+                secondFieldValue: ''
+            }
         }
         this.addMainInput = this.addMainInput.bind(this);
         this.hasChildren = this.hasChildren.bind(this);
+        this.handleAddSubInput = this.handleAddSubInput.bind(this);
 
+    }
+
+    generateNewId() {
+        let idsArray = [];
+
+        for (let i = 0 ; i < this.state.structure.length ; i++){
+           idsArray.push(parseInt(this.state.structure[i].id));
+        }
+
+        return (Math.max(...idsArray) + 1).toLocaleString();
     }
 
     structure = [
@@ -81,11 +72,12 @@ class FormContainer extends Component {
     ]
     
     addMainInput(e){
-        e.preventDefault()
+        e.preventDefault();
         let inputs = this.state.structure;
+
         if (inputs.length > 0) {
             inputs.push({
-                'id': inputs.length.toLocaleString(),
+                'id': this.generateNewId(),
                 'type': 'main',
                 'parentId': '0' 
             })
@@ -143,12 +135,57 @@ class FormContainer extends Component {
         this.setState({structure: inputs});
     }
 
+    handleAddSubInput(i, textV, selectV, firstField, secondField) {
+        let inputs = this.state.structure;
+        const parentInputId = inputs[i].id;
+
+        const subInputStructure = {
+            'id': this.generateNewId(),
+            'parentId': parentInputId.toLocaleString(),
+            'type': 'sub',
+        }
+
+        const newStructure = inputs.slice(0, i + 1).concat(subInputStructure, this.state.structure.slice(i + 1));
+
+        newStructure[i].question = textV;
+        newStructure[i].conditionType = selectV;
+        if(firstField){
+            newStructure[i].firstField = firstField;
+        }
+        if (secondField){
+            newStructure[i].secondField = secondField;
+        }
+
+        this.setState({
+            structure: newStructure, 
+            newInput: {
+                text: textV, 
+                select: selectV,
+                firstFieldValue: firstField,
+                secondFieldValue: secondField
+            }}
+        );
+        console.log(newStructure);
+
+    }
+
     render() {
         const inputs = this.state.structure.map((e, i) => {
-            if (e.type === 'sub') return <SubInput type='Number' handleDelete={e => this.handleDeleteSubInput(e)} index={i} key={i}/>
-            else return <MainInput handleDelete={e => this.handleDeleteInput(e)} index={i} key ={i}/>
+            if (e.type === 'sub') return (
+                <SubInput type='Number' 
+                          handleAddSubInput={(e, textV, selectV, firstField, secondField) => this.handleAddSubInput(e, textV, selectV, firstField, secondField)} 
+                          handleDelete={e => this.handleDeleteSubInput(e)} 
+                          input={this.state.newInput}
+                          index={i} 
+                          key={i}/>
+            )
+            else return (
+                <MainInput handleAddSubInput={(e, textV, selectV) => this.handleAddSubInput(e, textV, selectV)} 
+                           handleDelete={e => this.handleDeleteInput(e)} 
+                           index={i} 
+                           key ={i}/>
+            )
         })
-     
         return (
             <form className='form-group'>
                 {inputs}
