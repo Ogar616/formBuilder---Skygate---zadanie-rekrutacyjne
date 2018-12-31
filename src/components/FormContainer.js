@@ -8,192 +8,154 @@ class FormContainer extends Component {
         this.state = {
             structure: [
                 {
-                    type: 'Text'
+                    'id': '1',
+                    'parentId': '0', 
+                    'type': 'main'
+                      
                 },
                 {   
-                    children: [{
-                        type: 'Text'
-                    }]
+                    'id': '2',
+                    'parentId': '1',
+                    'type': 'sub',
+                    'conditiontype': 'Number'
                 },
                 {
-                    children: [{
-                        type: 'Number',
-                        children: [{
-                            type: 'Number',
-                        }]
-                    }]
-                }
+                    'id': '3',
+                    'parentId': '0' ,
+                    'type': 'main'
+                   
+                },
+                {   
+                    'id': '4',
+                    'parentId': '3',
+                    'type': 'sub',
+                    'conditiontype': 'Number'
+                },
+                {   
+                    'id': '5',
+                    'parentId': '3',
+                    'type': 'sub',
+                    'conditiontype': 'Number'
+                },
+
             ]
-           
         }
         this.addMainInput = this.addMainInput.bind(this);
         this.hasChildren = this.hasChildren.bind(this);
+
     }
 
-    addMainInput(){
-        console.log('Add Input')
+    structure = [
+        {
+            'id': '0',
+            'type': 'main'   
+        },
+        {   
+            'id': '1',
+            'parentId': '0',
+            'type': 'sub',
+            'conditiontype': 'Number'
+        },
+        {
+            'id': '2',
+            'type': 'main'
+        },
+        {
+            'id': '3',
+            'parentId': '2',
+            'type': 'sub',
+            'conditiontype': 'Text'
+        },
+        {
+            'id': '4',
+            'parentId': '2',
+            'type': 'sub',
+            'conditiontype': 'Bool'
+        },
+        {
+            'id': '5',
+            'parentId': '4',
+            'type': 'sub',
+            'conditiontype': 'Number'
+        }
+    ]
+    
+    addMainInput(e){
+        e.preventDefault()
+        let inputs = this.state.structure;
+        if (inputs.length > 0) {
+            inputs.push({
+                'id': inputs.length.toLocaleString(),
+                'type': 'main',
+                'parentId': '0' 
+            })
+        } else inputs.push({
+            'id': '1',
+            'type': 'main',
+            'parentId': '0'
+        })
+        this.setState({structure: inputs});
     }
 
-   hasChildren(obj){
+    hasChildren(obj){
         return !!obj.children
     }
 
-    list(data) {
-        const children = children => {
-          if (children) {
-            return (     <ul> <MainInput>
-                <SubInput>
-{ this.list(children) }  
-                </SubInput>
-            </MainInput>
-                                             
-                        </ul>
-                       
-                       )
-            
-            
+    listTransform = list => {
+        var map = {}, node, roots = [], i;
+        for (i = 0; i < list.length; i += 1) {
+            map[list[i].id] = i; // initialize the map
+            list[i].children = []; // initialize the children
+            console.log(list[i].children);
         }
-      }
-      
-      return data.map((node, index) => {
-        console.log(node.children);
-        let chi;
-        if (children(node.children)){
-            chi = node.children;
+        for (i = 0; i < list.length; i += 1) {
+            node = list[i];
+            if (node.parentId !== "0") {
+                // if you have dangling branches check that map[node.parentId] exists
+                list[map[node.parentId]].children.push(node);
+            } else {
+                roots.push(node);
+            }
         }
-        return <MainInput children={node.children}>
-               
-          
-          { children(node.children) }
+        console.log(roots);
+        return roots;
+    }
 
-            </MainInput>
-      })
+    handleDeleteSubInput(i) {
+        let inputs = this.state.structure;
+
+        inputs.splice(i, 1);
+        this.setState({structure: inputs});
+    }
+
+    handleDeleteInput(i) {
+        let inputs = this.state.structure;
+        const inputId = inputs[i].id;
+
+        inputs.splice(i, 1);
+
+        for (let i = 0 ; i < inputs.length ; i++) {
+            if (inputs[i].parentId === inputId.toLocaleString()){
+                inputs.splice(i, 1)
+                i--;
+            }
+        }
+        this.setState({structure: inputs});
     }
 
     render() {
+        const inputs = this.state.structure.map((e, i) => {
+            if (e.type === 'sub') return <SubInput type='Number' handleDelete={e => this.handleDeleteSubInput(e)} index={i} key={i}/>
+            else return <MainInput handleDelete={e => this.handleDeleteInput(e)} index={i} key ={i}/>
+        })
+     
         return (
             <form className='form-group'>
-                <button className='btn'onClick={this.addMainInput}>Add Input</button>
-                {/* <MainInput/>
-                <SubInput type='Number'/> */}
-                {this.list(this.state.structure)}
+                {inputs}
+                <button className='btn'onClick={e => this.addMainInput(e)}>Add Input</button>
             </form>
         )
     }
 }
 
 export default FormContainer;
-
-// const recurr = (prop) => {
-//     for (const key of Object.keys(prop)) {
-//         parent = prop[key];
-//         if (parent) {
-//             for (const key of Object.keys(parent)) {
-//                 child = parent[key];
-//                 if (child.hasOwnProperty('2')) {
-//                     recurr(parent);
-//                     allInputs.push(1); 
-//                 } else {
-//                     allInputs.push(0); 
-//                 }
-//             }
-//         }
-        
-//     }
-// }
-
-// let allInputs = [];
-        // let parent;
-        // // let child;
-        // const recurr = (prop) => {
-        //     for (const key of Object.keys(prop)) {
-        //         parent = prop[key];
-        //         if(parent) {
-        //             if (parent.hasOwnProperty('1')) {
-        //                 recurr(parent);
-        //                 allInputs.push(1); 
-        //             } else {
-        //                 allInputs.push(0); 
-        //             }
-        //         }
-        //     }
-        // }
-        // recurr(this.state);
-        // console.log(allInputs);
-
-//console.log('ddd')
-
-// const arr = [0, 1,2,[3,4],5,[6,7,[0, 0, 0], 8],9]
-
-// const rec = a => {
-//     a.forEach((e,i) => {
-//         if(typeof e === 'object'){
-//             rec(e);
-//         }    
-//         console.log('index: ' +  i + ' ' + 'e: ' + e)
-//     });
-// }
-
-// const ob = {
-//     a: 1,
-//     b: {
-//         c: 2,
-//         d: {
-//             e: 3
-//         }
-//     },
-//     f: {
-//         g: 4
-//     },
-//     h: {
-//         i: 5,
-//         j: 6,
-//         k: {
-//             l: 7,
-//             m: 8,
-//             n: {
-//                 o:{
-//                     p:{
-//                         r:{
-//                             s: 9,
-//                             t: 0
-//                         }
-//                     }
-//                 }
-//             }
-//         }
-//     },
-//     u: 10
-// }
-
-//console.log(arr);
-// console.log('  ')
-//rec(arr);
-
-// console.log(ob);
-
-// const r = o => {
-//     for (const key of Object.keys(o)) {
-//         if (typeof o[key] !== 'object'){
-//             console.log(o[key])
-//         }
-//         if (typeof o[key] === 'object'){
-//             let temp = o[key];
-//             for (const key of Object.keys(temp)) {
-//                 r(temp);
-//                 console.log(temp)
-//             }
-            
-//         }
-       
-//     }
-// }
-// r(ob);
-
-// console.log(' ')
-// console.log(' ')
-// console.log(' ')
-// console.log(' ')
-// console.log(' ')
-// console.log(' ');
-
