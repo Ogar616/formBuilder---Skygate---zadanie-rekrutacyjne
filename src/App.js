@@ -5,7 +5,7 @@ import FormContainer from './components/FormContainer';
 import Footer from './components/Footer';
 
 const App = () => (
-  <div className="App container">
+  <div className='App container'>
     <Header/>
     <FormContainer/>
     <Footer/>

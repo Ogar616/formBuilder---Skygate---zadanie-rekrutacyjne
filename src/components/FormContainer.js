@@ -1,6 +1,10 @@
 import React, { Component } from 'react';
 import MainInput from './formComponents/MainInput';
 import SubInput from './formComponents/SubInput';
+import Dexie from 'dexie';
+import db from '../dixie';
+
+
 
 class FormContainer extends Component {
     constructor(props) {
@@ -16,14 +20,10 @@ class FormContainer extends Component {
             newInput: {
                 text: '',
                 select: '',
-                firstFieldValue: '',
-                secondFieldValue: ''
+                firstConditionFieldValue: '',
+                secondConditionFieldValue: ''
             }
         }
-        this.addMainInput = this.addMainInput.bind(this);
-        this.hasChildren = this.hasChildren.bind(this);
-        this.handleAddSubInput = this.handleAddSubInput.bind(this);
-
     }
 
     generateNewId() {
@@ -32,84 +32,45 @@ class FormContainer extends Component {
         for (let i = 0 ; i < this.state.structure.length ; i++){
            idsArray.push(parseInt(this.state.structure[i].id));
         }
-
         return (Math.max(...idsArray) + 1).toLocaleString();
     }
-
-    structure = [
-        {
-            'id': '0',
-            'type': 'main'   
-        },
-        {   
-            'id': '1',
-            'parentId': '0',
-            'type': 'sub',
-            'conditiontype': 'Number'
-        },
-        {
-            'id': '2',
-            'type': 'main'
-        },
-        {
-            'id': '3',
-            'parentId': '2',
-            'type': 'sub',
-            'conditiontype': 'Text'
-        },
-        {
-            'id': '4',
-            'parentId': '2',
-            'type': 'sub',
-            'conditiontype': 'Bool'
-        },
-        {
-            'id': '5',
-            'parentId': '4',
-            'type': 'sub',
-            'conditiontype': 'Number'
-        }
-    ]
     
-    addMainInput(e){
+    handleAddMainInput(e){
         e.preventDefault();
         let inputs = this.state.structure;
+        let newInput;
 
         if (inputs.length > 0) {
-            inputs.push({
-                'id': this.generateNewId(),
-                'type': 'main',
-                'parentId': '0' 
-            })
-        } else inputs.push({
-            'id': '1',
-            'type': 'main',
-            'parentId': '0'
-        })
+            newInput = {
+                    'id': this.generateNewId(),
+                    'parentId': '0', 
+                    'type': 'main'
+                }
+        } else newInput = {
+            'id': 0,
+            'parentId': '0', 
+            'type': 'main'
+        };
+        inputs.push(newInput);
+    
+        this.addToDB(newInput.id, newInput.parentId, newInput.type);
         this.setState({structure: inputs});
     }
 
-    hasChildren(obj){
-        return !!obj.children
-    }
-
     listTransform = list => {
-        var map = {}, node, roots = [], i;
-        for (i = 0; i < list.length; i += 1) {
-            map[list[i].id] = i; // initialize the map
-            list[i].children = []; // initialize the children
-            console.log(list[i].children);
+        let map = {}, node, roots = [];
+        for (let i = 0; i < list.length; i ++) {
+            map[list[i].id] = i;
+            list[i].children = [];
         }
-        for (i = 0; i < list.length; i += 1) {
+        for (let i = 0 ; i < list.length ; i++) {
             node = list[i];
-            if (node.parentId !== "0") {
-                // if you have dangling branches check that map[node.parentId] exists
+            if (node.parentId !== '0') {
                 list[map[node.parentId]].children.push(node);
             } else {
                 roots.push(node);
             }
         }
-        console.log(roots);
         return roots;
     }
 
@@ -132,10 +93,62 @@ class FormContainer extends Component {
                 i--;
             }
         }
+
+        
         this.setState({structure: inputs});
     }
 
-    handleAddSubInput(i, textV, selectV, firstField, secondField) {
+    handleStore = (e) => {
+
+        e.preventDefault();
+        // const inputs = [
+        //     {
+        //         'id': '1',
+        //         'parentId': '0', 
+        //         'type': 'main'     
+        //     }
+        // ]
+        
+
+        // db.open();
+
+        Dexie.spawn(function*() {
+            const id = yield db.structures.put({stateId: 5, parentId: 0, type: 'main', question: 'ques', conditionType: 'Yes / No', firstConditionField: 'Greater Than', secondConditionField: '333'});
+            console.log("Got id " + id);
+            console.log(db.structures);
+
+            var tasks = yield db.structures.toArray();
+            console.log("Structure" + JSON.stringify(tasks, 0, 2));
+            // Now lets add a bunch of tasks
+            // yield db.tasks.bulkPut([
+            //     {id: 1, parentId :0, type: 'main', questio: 'questionnn', conditionType: 'Yes / No', firstConditionField: 'Less Than', secondConditionField: 33},
+            //     {id: 1, parentId :0, type: 'sub', questio: 'questionnn2222', conditionType: 'Yes / No', firstConditionField: 'Greater Than', secondConditionField: 44}
+            // ]);
+            // // Ok, so let's query it
+
+        //     yield db.tasks
+        // .where('id')
+        // .below(9999)
+        // .delete();
+    
+        }).catch (err => {
+            console.error ("Oooops! Something is wrong " + err.stack);
+        });
+
+    }
+
+    addToDB(stateId, parentId, type, question, conditionType, firstConditionField, secondConditionField){
+        Dexie.spawn(function*() {
+            const id = yield db.structures.put({stateId: stateId, parentId: parentId, type: type, question: question, conditionType: conditionType, firstConditionField: firstConditionField, secondConditionField: secondConditionField});
+   
+            var tasks = yield db.structures.toArray();
+            console.log("Structure" + JSON.stringify(tasks, 0, 2));
+        }).catch (err => {
+            console.error ("Oooops! Something is wrong " + err.stack);
+        });
+    }
+
+    handleAddSubInput(i, question, type, firstConditionField, secondConditionField) {
         let inputs = this.state.structure;
         const parentInputId = inputs[i].id;
 
@@ -147,40 +160,39 @@ class FormContainer extends Component {
 
         const newStructure = inputs.slice(0, i + 1).concat(subInputStructure, this.state.structure.slice(i + 1));
 
-        newStructure[i].question = textV;
-        newStructure[i].conditionType = selectV;
-        if(firstField){
-            newStructure[i].firstField = firstField;
+        newStructure[i].question = question;
+        newStructure[i].conditionType = type;
+        if(firstConditionField){
+            newStructure[i].firstConditionField = firstConditionField;
         }
-        if (secondField){
-            newStructure[i].secondField = secondField;
+        if (secondConditionField){
+            newStructure[i].secondConditionField = secondConditionField;
         }
 
+        this.addToDB(subInputStructure.id, subInputStructure.parentId, subInputStructure.type, newStructure[i].question, newStructure[i].conditionType, newStructure[i].firstConditionField,newStructure[i].secondConditionField)
         this.setState({
             structure: newStructure, 
             newInput: {
-                text: textV, 
-                select: selectV,
-                firstFieldValue: firstField,
-                secondFieldValue: secondField
+                text: question, 
+                select: type,
+                firstConditionFieldValue: firstConditionField,
+                secondConditionFieldValue: secondConditionField
             }}
         );
-        console.log(newStructure);
-
     }
 
     render() {
         const inputs = this.state.structure.map((e, i) => {
             if (e.type === 'sub') return (
                 <SubInput type='Number' 
-                          handleAddSubInput={(e, textV, selectV, firstField, secondField) => this.handleAddSubInput(e, textV, selectV, firstField, secondField)} 
+                          handleAddSubInput={(e, question, type, firstConditionField, secondConditionField) => this.handleAddSubInput(e, question, type, firstConditionField, secondConditionField)} 
                           handleDelete={e => this.handleDeleteSubInput(e)} 
                           input={this.state.newInput}
                           index={i} 
                           key={i}/>
             )
             else return (
-                <MainInput handleAddSubInput={(e, textV, selectV) => this.handleAddSubInput(e, textV, selectV)} 
+                <MainInput handleAddSubInput={(e, question, type) => this.handleAddSubInput(e, question, type)} 
                            handleDelete={e => this.handleDeleteInput(e)} 
                            index={i} 
                            key ={i}/>
@@ -189,10 +201,14 @@ class FormContainer extends Component {
         return (
             <form className='form-group'>
                 {inputs}
-                <button className='btn'onClick={e => this.addMainInput(e)}>Add Input</button>
+                <button className='btn'onClick={e => this.handleAddMainInput(e)}>Add Input</button>
+                <button className='btn' onClick={e=>this.handleStore(e)}>######################################</button>
             </form>
         )
     }
 }
 
 export default FormContainer;
+
+
+// structures: 'id, parentId, type, question, conditionType, firstConditionField, secondConditionField'
