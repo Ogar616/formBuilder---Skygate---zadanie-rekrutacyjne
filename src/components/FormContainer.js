@@ -9,7 +9,6 @@ class FormContainer extends Component {
         super(props);
         this.state = {
             structure: ([
-            
             ]),
             newInput: {
                 text: '',
@@ -23,46 +22,23 @@ class FormContainer extends Component {
     promise = db.structures.toArray().then(response => {
         return response
         }).then(state => {
-            this.setState({structure: state}, console.log('yy',state))
+            const flatState = this.transformToFlatStructure(state)
+            this.setState({structure: flatState}, console.log('yy',flatState))
     })
 
 
     transformToFlatStructure(array) {
-        const result = [].concat(...array.map(Object.values));
+        var result = [];
+        array.forEach( a => {
+            result.push(a);
+            if (Array.isArray(a.children)) {
+                result = result.concat(this.transformToFlatStructure(a.children));
+            }
+        });
+        return result;
+    };
 
-    }
-
-    generateNewId() {
-        let idsArray = [];
-
-        for (let i = 0 ; i < this.state.structure.length ; i++){
-           idsArray.push(parseInt(this.state.structure[i].id));
-        }
-        return (Math.max(...idsArray) + 1).toLocaleString();
-    }
-    
-    handleAddMainInput(e){
-        e.preventDefault();
-        let inputs = this.state.structure;
-        let newInput;
-
-        if (inputs.length > 0) {
-            newInput = {
-                    'id': this.generateNewId(),
-                    'parentId': '0', 
-                    'type': 'main'
-                }
-        } else newInput = {
-            'id': '1',
-            'parentId': '0', 
-            'type': 'main'
-        };
-        inputs.push(newInput);
-    
-        this.setState({structure: inputs}, this.updateDB);    
-    }
-
-    transformToTree = list => {
+    transformToTree(list){
         let map = {}, node, roots = [];
         for (let i = 0; i < list.length; i ++) {
             map[list[i].id] = i;
@@ -74,13 +50,21 @@ class FormContainer extends Component {
                 if (list[map[node.parentId]]){
                     list[map[node.parentId]].children.push(node);
                 }
-             
             } else {
                 roots.push(node);
             }
         }
         return roots;
-    }
+    };
+
+    generateNewId() {
+        let idsArray = [];
+
+        for (let i = 0 ; i < this.state.structure.length ; i++){
+           idsArray.push(parseInt(this.state.structure[i].id));
+        }
+        return (Math.max(...idsArray) + 1).toLocaleString();
+    };
 
     updateDB(){
         const n = 0;
@@ -101,26 +85,27 @@ class FormContainer extends Component {
             }).catch (err => {
             console.error ('Ooops' + err.stack);
             });
-    }
-
-    handleDeleteInput(i) {
+    };
+    
+    handleAddMainInput(e){
+        e.preventDefault();
         let inputs = this.state.structure;
-        const start = i;
+        let newInput;
 
-        inputs.splice(i, 1);
-
-        for (let i = start ; i < inputs.length ; i++) {
-            if (inputs[i]){
-                if (inputs[i].type === 'sub'){
-                    inputs.splice(i, 1);
-                    i--;
-                    continue;
+        if (inputs.length > 0) {
+            newInput = {
+                    'id': this.generateNewId(),
+                    'parentId': '0', 
+                    'type': 'main'
                 }
-                if (inputs[i].type === 'main') break;    
-            }
-        }
-        this.setState({structure: inputs}, this.updateDB);
-    }
+        } else newInput = {
+            'id': '1',
+            'parentId': '0', 
+            'type': 'main'
+        };
+        inputs.push(newInput);
+        this.setState({structure: inputs}, this.updateDB);    
+    };
 
     handleAddSubInput(i, question, type, firstConditionField, secondConditionField) {
         let inputs = this.state.structure;
@@ -151,9 +136,30 @@ class FormContainer extends Component {
                 select: type,
                 firstConditionFieldValue: firstConditionField,
                 secondConditionFieldValue: secondConditionField
-            }}, this.updateDB);
-          
-    }
+            }}, this.updateDB);  
+    };
+
+    handleDeleteInput(i) {
+        let inputs = this.state.structure;
+        const start = i;
+        let inputId = inputs[i].id
+
+        inputs.splice(i, 1);
+
+        for (let i = start ; i <= inputs.length ; i++) {
+            if (inputs[i]){
+                if (inputs[i].parentId === inputId){
+                    inputId = inputs[i].parentId;
+                    inputs.splice(i, 1);
+                    i--;
+                    continue;
+                }
+                if (inputs[i].type === 'main') break;    
+            }
+        }
+        this.setState({structure: inputs}, this.updateDB);
+        console.log(this.state.structure);
+    };
 
     render() {
         const inputs = this.state.structure.map((e, i) => {
@@ -183,6 +189,3 @@ class FormContainer extends Component {
 }
 
 export default FormContainer;
-
-
-// structures: 'id, parentId, type, question, conditionType, firstConditionField, secondConditionField'

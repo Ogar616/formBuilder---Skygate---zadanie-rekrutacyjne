@@ -5,7 +5,7 @@ class MainInput extends Component {
         super(props);
         this.state = {
             question: '',
-            type: 'Number'
+            type: ''
         }
     }
 
