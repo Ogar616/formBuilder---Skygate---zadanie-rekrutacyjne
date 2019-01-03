@@ -17,15 +17,13 @@ class FormContainer extends Component {
                 secondConditionFieldValue: ''
             }
         }
+        this.promise = db.structures.toArray().then(response => {
+            return response
+            }).then(state => {
+                const flatState = this.transformToFlatStructure(state)
+                this.setState({structure: flatState});
+        })
     }
-
-    promise = db.structures.toArray().then(response => {
-        return response
-        }).then(state => {
-            const flatState = this.transformToFlatStructure(state)
-            this.setState({structure: flatState}, console.log('yy',flatState))
-    })
-
 
     transformToFlatStructure(array) {
         var result = [];
@@ -38,23 +36,23 @@ class FormContainer extends Component {
         return result;
     };
 
-    transformToTree(list){
-        let map = {}, node, roots = [];
-        for (let i = 0; i < list.length; i ++) {
-            map[list[i].id] = i;
-            list[i].children = [];
+    transformToTree(array){
+        let map = {}, node, result = [];
+        for (let i = 0; i < array.length; i ++) {
+            map[array[i].id] = i;
+            array[i].children = [];
         }
-        for (let i = 0 ; i < list.length ; i++) {
-            node = list[i];
+        for (let i = 0 ; i < array.length ; i++) {
+            node = array[i];
             if (node.parentId !== '0') {
-                if (list[map[node.parentId]]){
-                    list[map[node.parentId]].children.push(node);
+                if (array[map[node.parentId]]){
+                    array[map[node.parentId]].children.push(node);
                 }
             } else {
-                roots.push(node);
+                result.push(node);
             }
         }
-        return roots;
+        return result;
     };
 
     generateNewId() {
@@ -73,8 +71,6 @@ class FormContainer extends Component {
             .where('id')
             .above(n.toLocaleString())
             .delete()    
-            var tasks = yield db.structures.toArray();
-            console.log("Structureeeee" + JSON.stringify(tasks, 0, 2));
         }).catch (err => {
             console.error ('Deleting from db failed' + err.stack);
         });
@@ -127,8 +123,6 @@ class FormContainer extends Component {
         if (secondConditionField){
             newStructure[i].secondConditionField = secondConditionField;
         }
-
-        console.log(this.state.structure);
         this.setState({
             structure: newStructure, 
             newInput: {
@@ -146,19 +140,16 @@ class FormContainer extends Component {
 
         inputs.splice(i, 1);
 
-        for (let i = start ; i <= inputs.length ; i++) {
+        for (let i = start ; i < inputs.length ; i++) {
             if (inputs[i]){
                 if (inputs[i].parentId === inputId){
-                    inputId = inputs[i].parentId;
+                    inputId = inputs[i].id;
                     inputs.splice(i, 1);
-                    i--;
-                    continue;
+                    i--; 
                 }
-                if (inputs[i].type === 'main') break;    
             }
         }
         this.setState({structure: inputs}, this.updateDB);
-        console.log(this.state.structure);
     };
 
     render() {
@@ -182,7 +173,6 @@ class FormContainer extends Component {
             <form className='form-group'>
                 {inputs}
                 <button className='btn'onClick={e => this.handleAddMainInput(e)}>Add Input</button>
-                <button className='btn' onClick={e=>this.handleStore(e)}>######################################</button>
             </form>
         )
     }

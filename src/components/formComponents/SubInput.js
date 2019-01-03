@@ -5,7 +5,7 @@ class SubInput extends Component {
         super(props);
         this.state = {
             question: '',
-            type: '',
+            type: 'Yes / No',
             firstConditionFieldValue: '',
             secondConditionFieldValue: ''
         }

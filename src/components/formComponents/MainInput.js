@@ -5,7 +5,7 @@ class MainInput extends Component {
         super(props);
         this.state = {
             question: '',
-            type: ''
+            type: 'Number'
         }
     }
 
@@ -13,7 +13,7 @@ class MainInput extends Component {
         this.setState({type:e.target.value});
     }
 
-    handlequestionChange = e => {
+    handleQuestionChange = e => {
         this.setState({question: e.target.value})
     }
 
@@ -39,7 +39,7 @@ class MainInput extends Component {
                         <input type='text' 
                                placeholder='Type your qestion'
                                value={this.state.question}
-                               onChange={this.handlequestionChange}/>
+                               onChange={this.handleQuestionChange}/>
                     </div>
                     <div className='form-row'>
                         <span>
