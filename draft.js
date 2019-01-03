@@ -86,3 +86,26 @@ handleStore = (e) => {
     });
 
 }
+
+
+handleDeleteSubInput(i, r) {
+    let inputs = this.state.structure;
+    // let inputId = inputs[i].id;
+
+    // inputs.splice(i, 1);
+    if (inputs[i].children){
+        inputs[i].children.forEach(({children, ...rest}) => {
+            r.push(rest);
+            if(children) this.handleDeleteSubInput(children, r)
+            });
+    }
+    
+    this.setState({structure: inputs}, this.updateDB);
+}
+
+promise = db.structures.toArray().then(response => {
+    return response
+    }).then(state => {
+        this.setState({structure: state})
+}
+    )

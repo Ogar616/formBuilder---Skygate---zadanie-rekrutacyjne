@@ -20,18 +20,17 @@ class FormContainer extends Component {
         }
     }
 
-    transformToFlatStructure(a, r) {
-        a.forEach(({children, ...rest}) => {
-        r.push(rest);
-        if(children) this.transformToFlatStructure(children, r)
-        });
-    }
-
     promise = db.structures.toArray().then(response => {
         return response
         }).then(state => {
-            this.setState({structure: state})
+            this.setState({structure: state}, console.log('yy',state))
     })
+
+
+    transformToFlatStructure(array) {
+        const result = [].concat(...array.map(Object.values));
+
+    }
 
     generateNewId() {
         let idsArray = [];
@@ -81,13 +80,6 @@ class FormContainer extends Component {
             }
         }
         return roots;
-    }
-
-    handleDeleteSubInput(i) {
-        let inputs = this.state.structure;
-
-        inputs.splice(i, 1);
-        this.setState({structure: inputs}, this.updateDB);
     }
 
     updateDB(){
@@ -151,7 +143,6 @@ class FormContainer extends Component {
             newStructure[i].secondConditionField = secondConditionField;
         }
 
-        // this.addToDB(subInputStructure.id, subInputStructure.parentId, subInputStructure.type, newStructure[i].question, newStructure[i].conditionType, newStructure[i].firstConditionField,newStructure[i].secondConditionField);
         console.log(this.state.structure);
         this.setState({
             structure: newStructure, 
@@ -169,7 +160,7 @@ class FormContainer extends Component {
             if (e.type === 'sub') return (
                 <SubInput type='Number' 
                           handleAddSubInput={(e, question, type, firstConditionField, secondConditionField) => this.handleAddSubInput(e, question, type, firstConditionField, secondConditionField)} 
-                          handleDelete={e => this.handleDeleteSubInput(e)} 
+                          handleDelete={e => this.handleDeleteInput(e)} 
                           input={this.state.newInput}
                           index={i} 
                           key={i}/>
