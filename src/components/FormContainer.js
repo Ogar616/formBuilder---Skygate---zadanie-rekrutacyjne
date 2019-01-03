@@ -4,19 +4,13 @@ import SubInput from './formComponents/SubInput';
 import Dexie from 'dexie';
 import db from '../dixie';
 
-
-
 class FormContainer extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            structure: [
-                {
-                    'id': '1',
-                    'parentId': '0', 
-                    'type': 'main'     
-                }
-            ],
+            structure: ([
+            
+            ]),
             newInput: {
                 text: '',
                 select: '',
@@ -25,6 +19,19 @@ class FormContainer extends Component {
             }
         }
     }
+
+    transformToFlatStructure(a, r) {
+        a.forEach(({children, ...rest}) => {
+        r.push(rest);
+        if(children) this.transformToFlatStructure(children, r)
+        });
+    }
+
+    promise = db.structures.toArray().then(response => {
+        return response
+        }).then(state => {
+            this.setState({structure: state})
+    })
 
     generateNewId() {
         let idsArray = [];
@@ -47,17 +54,16 @@ class FormContainer extends Component {
                     'type': 'main'
                 }
         } else newInput = {
-            'id': 0,
+            'id': '1',
             'parentId': '0', 
             'type': 'main'
         };
         inputs.push(newInput);
     
-        this.addToDB(newInput.id, newInput.parentId, newInput.type);
-        this.setState({structure: inputs});
+        this.setState({structure: inputs}, this.updateDB);    
     }
 
-    listTransform = list => {
+    transformToTree = list => {
         let map = {}, node, roots = [];
         for (let i = 0; i < list.length; i ++) {
             map[list[i].id] = i;
@@ -66,7 +72,10 @@ class FormContainer extends Component {
         for (let i = 0 ; i < list.length ; i++) {
             node = list[i];
             if (node.parentId !== '0') {
-                list[map[node.parentId]].children.push(node);
+                if (list[map[node.parentId]]){
+                    list[map[node.parentId]].children.push(node);
+                }
+             
             } else {
                 roots.push(node);
             }
@@ -78,74 +87,47 @@ class FormContainer extends Component {
         let inputs = this.state.structure;
 
         inputs.splice(i, 1);
-        this.setState({structure: inputs});
+        this.setState({structure: inputs}, this.updateDB);
+    }
+
+    updateDB(){
+        const n = 0;
+        Dexie.spawn(function*() {
+            yield db.structures
+            .where('id')
+            .above(n.toLocaleString())
+            .delete()    
+            var tasks = yield db.structures.toArray();
+            console.log("Structureeeee" + JSON.stringify(tasks, 0, 2));
+        }).catch (err => {
+            console.error ('Deleting from db failed' + err.stack);
+        });
+        const inputs = this.transformToTree(this.state.structure);
+
+        Dexie.spawn(function*() {
+            yield db.structures.bulkPut(inputs)
+            }).catch (err => {
+            console.error ('Ooops' + err.stack);
+            });
     }
 
     handleDeleteInput(i) {
         let inputs = this.state.structure;
-        const inputId = inputs[i].id;
+        const start = i;
 
         inputs.splice(i, 1);
 
-        for (let i = 0 ; i < inputs.length ; i++) {
-            if (inputs[i].parentId === inputId.toLocaleString()){
-                inputs.splice(i, 1)
-                i--;
+        for (let i = start ; i < inputs.length ; i++) {
+            if (inputs[i]){
+                if (inputs[i].type === 'sub'){
+                    inputs.splice(i, 1);
+                    i--;
+                    continue;
+                }
+                if (inputs[i].type === 'main') break;    
             }
         }
-
-        
-        this.setState({structure: inputs});
-    }
-
-    handleStore = (e) => {
-
-        e.preventDefault();
-        // const inputs = [
-        //     {
-        //         'id': '1',
-        //         'parentId': '0', 
-        //         'type': 'main'     
-        //     }
-        // ]
-        
-
-        // db.open();
-
-        Dexie.spawn(function*() {
-            const id = yield db.structures.put({stateId: 5, parentId: 0, type: 'main', question: 'ques', conditionType: 'Yes / No', firstConditionField: 'Greater Than', secondConditionField: '333'});
-            console.log("Got id " + id);
-            console.log(db.structures);
-
-            var tasks = yield db.structures.toArray();
-            console.log("Structure" + JSON.stringify(tasks, 0, 2));
-            // Now lets add a bunch of tasks
-            // yield db.tasks.bulkPut([
-            //     {id: 1, parentId :0, type: 'main', questio: 'questionnn', conditionType: 'Yes / No', firstConditionField: 'Less Than', secondConditionField: 33},
-            //     {id: 1, parentId :0, type: 'sub', questio: 'questionnn2222', conditionType: 'Yes / No', firstConditionField: 'Greater Than', secondConditionField: 44}
-            // ]);
-            // // Ok, so let's query it
-
-        //     yield db.tasks
-        // .where('id')
-        // .below(9999)
-        // .delete();
-    
-        }).catch (err => {
-            console.error ("Oooops! Something is wrong " + err.stack);
-        });
-
-    }
-
-    addToDB(stateId, parentId, type, question, conditionType, firstConditionField, secondConditionField){
-        Dexie.spawn(function*() {
-            const id = yield db.structures.put({stateId: stateId, parentId: parentId, type: type, question: question, conditionType: conditionType, firstConditionField: firstConditionField, secondConditionField: secondConditionField});
-   
-            var tasks = yield db.structures.toArray();
-            console.log("Structure" + JSON.stringify(tasks, 0, 2));
-        }).catch (err => {
-            console.error ("Oooops! Something is wrong " + err.stack);
-        });
+        this.setState({structure: inputs}, this.updateDB);
     }
 
     handleAddSubInput(i, question, type, firstConditionField, secondConditionField) {
@@ -169,7 +151,8 @@ class FormContainer extends Component {
             newStructure[i].secondConditionField = secondConditionField;
         }
 
-        this.addToDB(subInputStructure.id, subInputStructure.parentId, subInputStructure.type, newStructure[i].question, newStructure[i].conditionType, newStructure[i].firstConditionField,newStructure[i].secondConditionField)
+        // this.addToDB(subInputStructure.id, subInputStructure.parentId, subInputStructure.type, newStructure[i].question, newStructure[i].conditionType, newStructure[i].firstConditionField,newStructure[i].secondConditionField);
+        console.log(this.state.structure);
         this.setState({
             structure: newStructure, 
             newInput: {
@@ -177,8 +160,8 @@ class FormContainer extends Component {
                 select: type,
                 firstConditionFieldValue: firstConditionField,
                 secondConditionFieldValue: secondConditionField
-            }}
-        );
+            }}, this.updateDB);
+          
     }
 
     render() {
