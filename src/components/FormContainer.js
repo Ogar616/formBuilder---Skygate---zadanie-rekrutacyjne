@@ -18,9 +18,9 @@ class FormContainer extends Component {
             }
         }
         this.promise = db.structures.toArray().then(response => {
-            return response
+            return response;
             }).then(state => {
-                const flatState = this.transformToFlatStructure(state)
+                const flatState = this.transformToFlatStructure(state);
                 this.setState({structure: flatState});
         })
     }
@@ -70,14 +70,14 @@ class FormContainer extends Component {
             yield db.structures
             .where('id')
             .above(n.toLocaleString())
-            .delete()    
+            .delete();
         }).catch (err => {
             console.error ('Deleting from db failed' + err.stack);
         });
-        const inputs = this.transformToTree(this.state.structure);
+        const inputs = this.transformToTree(this.state.structure);    
 
         Dexie.spawn(function*() {
-            yield db.structures.bulkPut(inputs)
+            yield db.structures.bulkPut(inputs);
             }).catch (err => {
             console.error ('Ooops' + err.stack);
             });
@@ -136,7 +136,7 @@ class FormContainer extends Component {
     handleDeleteInput(i) {
         let inputs = this.state.structure;
         const start = i;
-        let inputId = inputs[i].id
+        let inputId = inputs[i].id;
 
         inputs.splice(i, 1);
 
@@ -149,6 +149,12 @@ class FormContainer extends Component {
                 }
             }
         }
+        let mainInputs = 0;
+        inputs.forEach(e => {
+            if(e.type === 'main') mainInputs++;
+        })
+        if (mainInputs === 0) inputs = [];
+
         this.setState({structure: inputs}, this.updateDB);
     };
 
