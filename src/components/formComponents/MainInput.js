@@ -11,21 +11,21 @@ class MainInput extends Component {
 
     handleSelectChange = e => {
         this.setState({type:e.target.value});
-    }
+    };
 
     handleQuestionChange = e => {
         this.setState({question: e.target.value})
-    }
+    };
 
     handleDeleteInput = e => {
         e.preventDefault();
         this.props.handleDelete(this.props.index)
-    }
+    };
 
     handleAddSubInput = e => {
         e.preventDefault();
         this.props.handleAddSubInput(this.props.index, this.state.question, this.state.type)
-    }
+    };
 
     render() {
         return ( 

@@ -36,13 +36,22 @@ class FormContainer extends Component {
         return result;
     };
 
+    addDepth(arr, depth = 0){
+        arr.forEach(obj => {
+            obj.depth = depth
+            this.addDepth(obj.children, depth+1)
+        })
+    }
+
     transformToTree(array){
         let map = {}, node, result = [];
-        for (let i = 0; i < array.length; i ++) {
+        for (let i = 0; i < array.length; i++) {
             map[array[i].id] = i;
             array[i].children = [];
         }
-        for (let i = 0 ; i < array.length ; i++) {
+
+        for (let i = 0; i < array.length; i++) {
+            
             node = array[i];
             if (node.parentId !== '0') {
                 if (array[map[node.parentId]]){
@@ -58,7 +67,7 @@ class FormContainer extends Component {
     generateNewId() {
         let idsArray = [];
 
-        for (let i = 0 ; i < this.state.structure.length ; i++){
+        for (let i = 0; i < this.state.structure.length; i++){
            idsArray.push(parseInt(this.state.structure[i].id));
         }
         return (Math.max(...idsArray) + 1).toLocaleString();
@@ -74,7 +83,8 @@ class FormContainer extends Component {
         }).catch (err => {
             console.error ('Deleting from db failed' + err.stack);
         });
-        const inputs = this.transformToTree(this.state.structure);    
+        let  inputs = this.transformToTree(this.state.structure);    
+        this.addDepth(inputs);
 
         Dexie.spawn(function*() {
             yield db.structures.bulkPut(inputs);
@@ -140,7 +150,7 @@ class FormContainer extends Component {
 
         inputs.splice(i, 1);
 
-        for (let i = start ; i < inputs.length ; i++) {
+        for (let i = start; i < inputs.length; i++) {
             if (inputs[i]){
                 if (inputs[i].parentId === inputId){
                     inputId = inputs[i].id;
@@ -160,12 +170,14 @@ class FormContainer extends Component {
 
     render() {
         const inputs = this.state.structure.map((e, i) => {
+            const margin = (e.depth+1)*30+'px'
             if (e.type === 'sub') return (
                 <SubInput type='Number' 
                           handleAddSubInput={(e, question, type, firstConditionField, secondConditionField) => this.handleAddSubInput(e, question, type, firstConditionField, secondConditionField)} 
                           handleDelete={e => this.handleDeleteInput(e)} 
                           input={this.state.newInput}
                           index={i} 
+                          margin={margin}
                           key={i}/>
             )
             else return (

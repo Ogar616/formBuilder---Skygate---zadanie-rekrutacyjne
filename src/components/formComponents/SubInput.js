@@ -7,25 +7,25 @@ class SubInput extends Component {
             question: '',
             type: 'Yes / No',
             firstConditionFieldValue: '',
-            secondConditionFieldValue: ''
+            secondConditionFieldValue: '',
         }
     }
 
     handleFirstConditionFieldChange = e => {
         this.setState({firstConditionFieldValue: e.target.value});
-    }
+    };
 
     handleSecondConditionFieldChange = e => {
         this.setState({secondConditionFieldValue: e.target.value});
-    }
+    };
 
     handleQuestionChange = e => {
         this.setState({question: e.target.value});
-    }
+    };
 
     handleSelectChange = e => {
         this.setState({type: e.target.value});
-    }
+    };
 
     handleDeleteSubInput = e => {
         e.preventDefault();
@@ -39,7 +39,6 @@ class SubInput extends Component {
 
     render() {
         let firstConditionField;
-    
         let secondConditionField;
     
         if (this.props.input.select === 'Text'){
@@ -83,7 +82,7 @@ class SubInput extends Component {
             );
         }
         return (
-            <fieldset className='form-wrapper' style={{marginLeft: '45px'}}>
+            <fieldset className='form-wrapper' style={{marginLeft: this.props.margin}}>
                 sub
                 <div className='input-container'>
                     <div className='form-row'>
