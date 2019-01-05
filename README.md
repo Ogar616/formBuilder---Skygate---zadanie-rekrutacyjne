@@ -1,6 +1,12 @@
 ## Responsive ReactJS App with persistent state build with indexeddb (DexieJS)
 
 ### Instalation 
+
+You can see this application on:
+http://kamilsobczyk.slask.pl/
+
+or..
+
 In your console:
 1. Go to the folder where you want to store your project, and clone the new repository:
     git clone https://github.com/Ogar616/formBuilder-Skygate-zadanie-rekrutacyjne.git
