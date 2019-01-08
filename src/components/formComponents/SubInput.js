@@ -83,7 +83,6 @@ class SubInput extends Component {
         }
         return (
             <fieldset className='form-wrapper' style={{marginLeft: this.props.margin}}>
-                sub
                 <div className='input-container'>
                     <div className='form-row'>
                         <span>

@@ -30,7 +30,6 @@ class MainInput extends Component {
     render() {
         return ( 
             <fieldset className='form-wrapper'>
-                main
                 <div className='input-container'>
                     <div className='form-row'>
                         <span>
