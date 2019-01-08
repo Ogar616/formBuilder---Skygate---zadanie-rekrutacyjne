@@ -10,11 +10,11 @@ class MainInput extends Component {
     }
 
     handleSelectChange = e => {
-        this.setState({type:e.target.value});
+        this.setState({ type: e.target.value });
     };
 
     handleQuestionChange = e => {
-        this.setState({question: e.target.value})
+        this.setState({ question: e.target.value })
     };
 
     handleDeleteInput = e => {
@@ -28,24 +28,24 @@ class MainInput extends Component {
     };
 
     render() {
-        return ( 
+        return (
             <fieldset className='form-wrapper'>
                 <div className='input-container'>
                     <div className='form-row'>
                         <span>
                             Question
                         </span>
-                        <input type='text' 
-                               placeholder='Type your qestion'
-                               value={this.state.question}
-                               onChange={this.handleQuestionChange}/>
+                        <input type='text'
+                            placeholder='Type your qestion'
+                            value={this.state.question}
+                            onChange={this.handleQuestionChange} />
                     </div>
                     <div className='form-row'>
                         <span>
                             Type
                         </span>
-                        <select value={this.state.type} 
-                                onChange={this.handleSelectChange}>
+                        <select value={this.state.type}
+                            onChange={this.handleSelectChange}>
                             <option value='Yes / No'>Yes / No</option>
                             <option value='Text'>Text</option>
                             <option value='Number'>Number</option>
@@ -56,7 +56,7 @@ class MainInput extends Component {
                         <button className='btn' onClick={this.handleDeleteInput}>Delete Input</button>
                     </div>
                 </div>
-            </fieldset> 
+            </fieldset>
         )
     }
 }

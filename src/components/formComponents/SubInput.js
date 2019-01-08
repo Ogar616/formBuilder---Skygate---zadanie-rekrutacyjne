@@ -12,19 +12,19 @@ class SubInput extends Component {
     }
 
     handleFirstConditionFieldChange = e => {
-        this.setState({firstConditionFieldValue: e.target.value});
+        this.setState({ firstConditionFieldValue: e.target.value });
     };
 
     handleSecondConditionFieldChange = e => {
-        this.setState({secondConditionFieldValue: e.target.value});
+        this.setState({ secondConditionFieldValue: e.target.value });
     };
 
     handleQuestionChange = e => {
-        this.setState({question: e.target.value});
+        this.setState({ question: e.target.value });
     };
 
     handleSelectChange = e => {
-        this.setState({type: e.target.value});
+        this.setState({ type: e.target.value });
     };
 
     handleDeleteSubInput = e => {
@@ -40,11 +40,11 @@ class SubInput extends Component {
     render() {
         let firstConditionField;
         let secondConditionField;
-    
-        if (this.props.input.select === 'Text'){
+
+        if (this.props.input.select === 'Text') {
             firstConditionField = (
-                <select className='condition-field' 
-                        onChange={this.handleFirstConditionFieldChange}>
+                <select className='condition-field'
+                    onChange={this.handleFirstConditionFieldChange}>
                     <option value='Equals'>Equals</option>
                     <option value='Not equals'>Not equals</option>
                 </select>
@@ -56,7 +56,7 @@ class SubInput extends Component {
         if (this.props.input.select === 'Number') {
             firstConditionField = (
                 <select className='condition-field'
-                        onChange={this.handleFirstConditionFieldChange}>
+                    onChange={this.handleFirstConditionFieldChange}>
                     <option value='Equals'>Equals</option>
                     <option value='Greater than'>Greater than</option>
                     <option value='Less than'>Less than</option>
@@ -69,7 +69,7 @@ class SubInput extends Component {
         if (this.props.input.select === 'Yes / No') {
             firstConditionField = (
                 <select className='condition-field'
-                        onChange={this.handleFirstConditionFieldChange}>
+                    onChange={this.handleFirstConditionFieldChange}>
                     <option value='Equals'>Equals</option>
                     <option value='Not equals'>Not equals</option>
                 </select>
@@ -82,7 +82,7 @@ class SubInput extends Component {
             );
         }
         return (
-            <fieldset className='form-wrapper' style={{marginLeft: this.props.margin}}>
+            <fieldset className='form-wrapper' style={{ marginLeft: this.props.margin }}>
                 <div className='input-container'>
                     <div className='form-row'>
                         <span>
@@ -95,7 +95,7 @@ class SubInput extends Component {
                         <span>
                             Question
                         </span>
-                        <input type='text' placeholder='Type your qestion' onChange={this.handleQuestionChange}/>
+                        <input type='text' placeholder='Type your qestion' onChange={this.handleQuestionChange} />
                     </div>
                     <div className='form-row'>
                         <span>
