@@ -82,37 +82,39 @@ class SubInput extends Component {
             );
         }
         return (
-            <fieldset className='form-wrapper' style={{ marginLeft: this.props.margin }}>
-                <div className='input-container'>
-                    <div className='form-row'>
-                        <span>
-                            Condition
+            <>
+                <fieldset className='form-wrapper' style={{ marginLeft: this.props.margin }}>
+                    <div className='input-container'>
+                        <div className='form-row'>
+                            <span>
+                                Condition
                         </span>
-                        {firstConditionField}
-                        {secondConditionField}
-                    </div>
-                    <div className='form-row'>
-                        <span>
-                            Question
+                            {firstConditionField}
+                            {secondConditionField}
+                        </div>
+                        <div className='form-row'>
+                            <span>
+                                Question
                         </span>
-                        <input type='text' placeholder='Type your qestion' onChange={this.handleQuestionChange} />
-                    </div>
-                    <div className='form-row'>
-                        <span>
-                            Type
+                            <input type='text' placeholder='Type your qestion' onChange={this.handleQuestionChange} />
+                        </div>
+                        <div className='form-row'>
+                            <span>
+                                Type
                         </span>
-                        <select onChange={this.handleSelectChange}>
-                            <option value='Yes / No'>Yes / No</option>
-                            <option value='Text'>Text</option>
-                            <option value='Number'>Number</option>
-                        </select>
+                            <select onChange={this.handleSelectChange}>
+                                <option value='Yes / No'>Yes / No</option>
+                                <option value='Text'>Text</option>
+                                <option value='Number'>Number</option>
+                            </select>
+                        </div>
+                        <div className='buttons'>
+                            <button className='btn' onClick={this.handleAddSubInput}>Add Sub-Input</button>
+                            <button className='btn' onClick={this.handleDeleteSubInput}>Delete Input</button>
+                        </div>
                     </div>
-                    <div className='buttons'>
-                        <button className='btn' onClick={this.handleAddSubInput}>Add Sub-Input</button>
-                        <button className='btn' onClick={this.handleDeleteSubInput}>Delete Input</button>
-                    </div>
-                </div>
-            </fieldset>
+                </fieldset>
+            </>
         );
     }
 }

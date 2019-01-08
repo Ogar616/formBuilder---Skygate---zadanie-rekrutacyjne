@@ -29,34 +29,36 @@ class MainInput extends Component {
 
     render() {
         return (
-            <fieldset className='form-wrapper'>
-                <div className='input-container'>
-                    <div className='form-row'>
-                        <span>
-                            Question
+            <>
+                <fieldset className='form-wrapper'>
+                    <div className='input-container'>
+                        <div className='form-row'>
+                            <span>
+                                Question
                         </span>
-                        <input type='text'
-                            placeholder='Type your qestion'
-                            value={this.state.question}
-                            onChange={this.handleQuestionChange} />
-                    </div>
-                    <div className='form-row'>
-                        <span>
-                            Type
+                            <input type='text'
+                                placeholder='Type your qestion'
+                                value={this.state.question}
+                                onChange={this.handleQuestionChange} />
+                        </div>
+                        <div className='form-row'>
+                            <span>
+                                Type
                         </span>
-                        <select value={this.state.type}
-                            onChange={this.handleSelectChange}>
-                            <option value='Yes / No'>Yes / No</option>
-                            <option value='Text'>Text</option>
-                            <option value='Number'>Number</option>
-                        </select>
+                            <select value={this.state.type}
+                                onChange={this.handleSelectChange}>
+                                <option value='Yes / No'>Yes / No</option>
+                                <option value='Text'>Text</option>
+                                <option value='Number'>Number</option>
+                            </select>
+                        </div>
+                        <div className='buttons'>
+                            <button className='btn' onClick={this.handleAddSubInput}>Add Sub-Input</button>
+                            <button className='btn' onClick={this.handleDeleteInput}>Delete Input</button>
+                        </div>
                     </div>
-                    <div className='buttons'>
-                        <button className='btn' onClick={this.handleAddSubInput}>Add Sub-Input</button>
-                        <button className='btn' onClick={this.handleDeleteInput}>Delete Input</button>
-                    </div>
-                </div>
-            </fieldset>
+                </fieldset>
+            </>
         )
     }
 }

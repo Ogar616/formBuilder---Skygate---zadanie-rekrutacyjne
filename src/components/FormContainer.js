@@ -19,6 +19,9 @@ class FormContainer extends Component {
                 secondConditionFieldValue: ''
             }
         }
+    }
+
+    componentDidMount() {
         this.promise = db.structures.toArray().then(response => {
             return response;
         }).then(state => {
@@ -191,10 +194,12 @@ class FormContainer extends Component {
             )
         })
         return (
-            <form className='form-group'>
-                {inputs}
-                <button className='btn' onClick={e => this.handleAddMainInput(e)}>Add Input</button>
-            </form>
+            <>
+                <form className='form-group'>
+                    {inputs}
+                    <button className='btn' onClick={e => this.handleAddMainInput(e)}>Add Input</button>
+                </form>
+            </>
         )
     }
 }
