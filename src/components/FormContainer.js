@@ -6,7 +6,7 @@ import MainInput from './formComponents/MainInput';
 import SubInput from './formComponents/SubInput';
 
 
-class FormContainer extends Component {
+export default class FormContainer extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -203,5 +203,3 @@ class FormContainer extends Component {
         )
     }
 }
-
-export default FormContainer;
