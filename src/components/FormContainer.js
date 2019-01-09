@@ -32,10 +32,11 @@ export default class FormContainer extends Component {
 
     transformToFlatStructure(array) {
         let result = [];
-        array.forEach(a => {
-            result.push(a);
-            if (Array.isArray(a.children)) {
-                result = result.concat(this.transformToFlatStructure(a.children));
+
+        array.forEach(obj => {
+            result.push(obj);
+            if (Array.isArray(obj.children)) {
+                result = result.concat(this.transformToFlatStructure(obj.children));
             }
         });
         return result;
@@ -50,13 +51,13 @@ export default class FormContainer extends Component {
 
     transformToTree(array) {
         let map = {}, node, result = [];
+
         for (let i = 0; i < array.length; i++) {
             map[array[i].id] = i;
             array[i].children = [];
         }
 
         for (let i = 0; i < array.length; i++) {
-
             node = array[i];
             if (node.parentId !== '0') {
                 if (array[map[node.parentId]]) {
@@ -80,6 +81,7 @@ export default class FormContainer extends Component {
 
     updateDB() {
         const n = 0;
+
         Dexie.spawn(function* () {
             yield db.structures
                 .where('id')
@@ -88,7 +90,9 @@ export default class FormContainer extends Component {
         }).catch(err => {
             console.error('Deleting from db failed' + err.stack);
         });
+
         let inputs = this.transformToTree(this.state.structure);
+
         this.addDepth(inputs);
 
         Dexie.spawn(function* () {
@@ -114,7 +118,9 @@ export default class FormContainer extends Component {
             'parentId': '0',
             'type': 'main'
         };
+
         inputs.push(newInput);
+        
         this.setState({ structure: inputs }, this.updateDB);
     };
 
@@ -132,12 +138,14 @@ export default class FormContainer extends Component {
 
         newStructure[i].question = question;
         newStructure[i].conditionType = type;
+
         if (firstConditionField) {
             newStructure[i].firstConditionField = firstConditionField;
         }
         if (secondConditionField) {
             newStructure[i].secondConditionField = secondConditionField;
         }
+
         this.setState({
             structure: newStructure,
             newInput: {
@@ -150,8 +158,8 @@ export default class FormContainer extends Component {
     };
 
     handleDeleteInput(i) {
-        let inputs = this.state.structure;
         const start = i;
+        let inputs = this.state.structure;
         let inputId = inputs[i].id;
 
         inputs.splice(i, 1);
@@ -165,19 +173,21 @@ export default class FormContainer extends Component {
                 }
             }
         }
-        let mainInputs = 0;
-        inputs.forEach(e => {
-            if (e.type === 'main') mainInputs++;
+
+        let numberOfMainInputs = 0;
+
+        inputs.forEach(obj => {
+            if (obj.type === 'main') numberOfMainInputs++;
         })
-        if (mainInputs === 0) inputs = [];
+        if (numberOfMainInputs === 0) inputs = [];
 
         this.setState({ structure: inputs }, this.updateDB);
     };
 
     render() {
-        const inputs = this.state.structure.map((e, i) => {
-            const margin = (e.depth + 1) * 30 + 'px'
-            if (e.type === 'sub') return (
+        const inputs = this.state.structure.map((obj, i) => {
+            const margin = (obj.depth + 1) * 30 + 'px';
+            if (obj.type === 'sub') return (
                 <SubInput type='Number'
                     handleAddSubInput={(e, question, type, firstConditionField, secondConditionField) => this.handleAddSubInput(e, question, type, firstConditionField, secondConditionField)}
                     handleDelete={e => this.handleDeleteInput(e)}
