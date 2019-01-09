@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 
-class SubInput extends Component {
+export default class SubInput extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -118,5 +118,3 @@ class SubInput extends Component {
         );
     }
 }
-
-export default SubInput;

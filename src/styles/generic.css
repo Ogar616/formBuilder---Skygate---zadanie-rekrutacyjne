@@ -25,9 +25,10 @@ input, select {
 
 .condition-field {
     width: 20%;
-    &:first-of-type {
-        width: 35%;
-    }
+}
+
+.condition-field:first-of-type {
+    width: 35%;
 }
 
 input.condition-field {
@@ -48,9 +49,10 @@ button {
     text-align: center;
     font-size: 1em;
     margin-top: 6em;
-    .github {
-        width: 1.2em;
-        height: 1.2em;
-        margin-left: 0.5em;
-    }
+}
+
+.github {
+    width: 1.2em;
+    height: 1.2em;
+    margin-left: 0.5em;
 }

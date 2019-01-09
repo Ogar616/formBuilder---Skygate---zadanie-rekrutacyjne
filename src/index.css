@@ -1,1 +1,2 @@
-@import 'App.scss';
+@import './styles/reset.css';
+@import './styles/generic.css';

@@ -31,7 +31,7 @@ class FormContainer extends Component {
     }
 
     transformToFlatStructure(array) {
-        var result = [];
+        let result = [];
         array.forEach(a => {
             result.push(a);
             if (Array.isArray(a.children)) {
