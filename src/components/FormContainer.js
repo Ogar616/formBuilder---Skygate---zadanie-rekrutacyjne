@@ -6,26 +6,34 @@ import MainInput from "./formComponents/MainInput";
 import SubInput from "./formComponents/SubInput";
 
 export default class FormContainer extends Component {
-  state = {
-    structure: [],
-    newInput: {
-      text: "",
-      select: "",
-      firstConditionFieldValue: "",
-      secondConditionFieldValue: ""
+    constructor(props){
+        super(props);
+        this.state = {
+            structure: [],
+            newInput: {
+              text: "",
+              select: "",
+              firstConditionFieldValue: "",
+              secondConditionFieldValue: ""
+            }
+          };
+
+          this.promise = db.structures
+          .toArray()
+          .then(response => {
+            return response;
+          })
+          .then(state => {
+            const flatState = this.transformToFlatStructure(state);
+            this.setState({ structure: flatState });
+          });
     }
-  };
+
+
+
 
   componentDidMount() {
-    this.promise = db.structures
-      .toArray()
-      .then(response => {
-        return response;
-      })
-      .then(state => {
-        const flatState = this.transformToFlatStructure(state);
-        this.setState({ structure: flatState });
-      });
+    
   }
 
   transformToFlatStructure(array) {
@@ -150,7 +158,9 @@ export default class FormContainer extends Component {
       id: this.generateNewId(),
       parentId: parentInputId.toLocaleString(),
       type: "sub",
-      class: "empty"
+      class: "empty",
+      firstConditionField: '',
+      secondConditionField: ''
     };
 
     const newStructure = inputs
@@ -213,7 +223,6 @@ export default class FormContainer extends Component {
       if (obj.type === "sub")
         return (
           <SubInput
-            type="Number"
             handleAddSubInput={(
               e,
               question,
@@ -234,6 +243,10 @@ export default class FormContainer extends Component {
             index={i}
             margin={margin}
             class={obj.class}
+            question={obj.question}
+            type={obj.conditionType}
+            firstConditionField={obj.firstConditionField}
+            secondConditionField={obj.secondConditionField}
             key={i}
           />
         );
@@ -246,6 +259,8 @@ export default class FormContainer extends Component {
             handleDelete={e => this.handleDeleteInput(e)}
             index={i}
             class={obj.class}
+            question={obj.question}
+            type={obj.conditionType}
             key={i}
           />
         );

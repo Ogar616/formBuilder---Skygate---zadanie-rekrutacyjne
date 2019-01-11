@@ -3,7 +3,7 @@ import React, { Component } from "react";
 export default class MainInput extends Component {
   state = {
     question: this.props.question,
-    type: "Number"
+    type: this.props.type
   };
 
   handleSelectChange = e => {
@@ -39,14 +39,14 @@ export default class MainInput extends Component {
               <input
                 type="text"
                 placeholder="Type your qestion"
-                value={this.state.question}
+                value={this.props.question}
                 onChange={this.handleQuestionChange}
               />
             </div>
             <div className="form-row">
               <span>Type</span>
               <select
-                value={this.state.type}
+                value={this.props.type}
                 onChange={this.handleSelectChange}
               >
                 <option value="Yes / No">Yes / No</option>

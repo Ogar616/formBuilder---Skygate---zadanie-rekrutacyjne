@@ -2,10 +2,10 @@ import React, { Component } from "react";
 
 export default class SubInput extends Component {
   state = {
-    question: "",
-    type: "Yes / No",
-    firstConditionFieldValue: "",
-    secondConditionFieldValue: ""
+    question: this.props.question,
+    type: this.props.type,
+    firstConditionFieldValue: this.props.firstConditionField,
+    secondConditionFieldValue: this.props.secondConditionField
   };
 
   handleFirstConditionFieldChange = e => {
@@ -43,63 +43,91 @@ export default class SubInput extends Component {
   render() {
     let firstConditionField;
     let secondConditionField;
+
+    let select = '';
+    if (this.state.firstConditionFieldValue) {
+        if (this.state.firstConditionFieldValue === 'Equals'){
+            select = 'Not equals';
+        } else select = 'Equals';
+    } else select = 'Equals';
+
+    
+
     const formClass = `form-wrapper ${this.props.class}`;
 
-    if (this.props.input.select === "Text") {
-      firstConditionField = (
+       firstConditionField = (
         <select
           className="condition-field"
           onChange={this.handleFirstConditionFieldChange}
         >
-          <option value="Equals">Equals</option>
-          <option value="Not equals">Not equals</option>
+          <option value={this.state.firstConditionFieldValue}>{this.state.firstConditionFieldValue !== undefined ? this.state.firstConditionFieldValue : 'Not equals'}</option>
+          <option value={this.state.firstConditionFieldValue}>{select}</option>
         </select>
       );
       secondConditionField = (
         <input
           className="condition-field"
           onChange={this.handleSecondConditionFieldChange}
+          value={this.state.secondConditionFieldValue}
         />
       );
-    }
-    if (this.props.input.select === "Number") {
-      firstConditionField = (
-        <select
-          className="condition-field"
-          onChange={this.handleFirstConditionFieldChange}
-        >
-          <option value="Equals">Equals</option>
-          <option value="Greater than">Greater than</option>
-          <option value="Less than">Less than</option>
-        </select>
-      );
-      secondConditionField = (
-        <input
-          className="condition-field"
-          onChange={this.handleSecondConditionFieldChange}
-        />
-      );
-    }
-    if (this.props.input.select === "Yes / No") {
-      firstConditionField = (
-        <select
-          className="condition-field"
-          onChange={this.handleFirstConditionFieldChange}
-        >
-          <option value="Equals">Equals</option>
-          <option value="Not equals">Not equals</option>
-        </select>
-      );
-      secondConditionField = (
-        <select
-          className="condition-field"
-          onChange={this.handleSecondConditionFieldChange}
-        >
-          <option value="Yes">Yes</option>
-          <option value="No">No</option>
-        </select>
-      );
-    }
+    
+
+    // if (this.props.input.select === "Text") {
+    //   firstConditionField = (
+    //     <select
+    //       className="condition-field"
+    //       onChange={this.handleFirstConditionFieldChange}
+    //     >
+    //       <option value="Equals">Equals</option>
+    //       <option value="Not equals">Not equals</option>
+    //     </select>
+    //   );
+    //   secondConditionField = (
+    //     <input
+    //       className="condition-field"
+    //       onChange={this.handleSecondConditionFieldChange}
+    //     />
+    //   );
+    // }
+    // if (this.props.input.select === "Number") {
+    //   firstConditionField = (
+    //     <select
+    //       className="condition-field"
+    //       onChange={this.handleFirstConditionFieldChange}
+    //     >
+    //       <option value="Equals">Equals</option>
+    //       <option value="Greater than">Greater than</option>
+    //       <option value="Less than">Less than</option>
+    //     </select>
+    //   );
+    //   secondConditionField = (
+    //     <input
+    //       className="condition-field"
+    //       onChange={this.handleSecondConditionFieldChange}
+    //     />
+    //   );
+    // }
+    // if (this.props.input.select === "Yes / No") {
+    //   firstConditionField = (
+    //     <select
+    //       className="condition-field"
+    //       onChange={this.handleFirstConditionFieldChange}
+    //     >
+    //       <option value="Equals">Equals</option>
+    //       <option value="Not equals">Not equals</option>
+    //     </select>
+    //   );
+    //   secondConditionField = (
+    //     <select
+    //       className="condition-field"
+    //       onChange={this.handleSecondConditionFieldChange}
+    //     >
+    //       <option value="Yes">Yes</option>
+    //       <option value="No">No</option>
+    //     </select>
+    //   );
+    // }
     return (
       <>
         <fieldset
@@ -118,6 +146,7 @@ export default class SubInput extends Component {
                 type="text"
                 placeholder="Type your qestion"
                 onChange={this.handleQuestionChange}
+                value={this.state.question}
               />
             </div>
             <div className="form-row">
