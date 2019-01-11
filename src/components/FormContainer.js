@@ -143,8 +143,8 @@ export default class FormContainer extends Component {
     const parentInputId = inputs[i].id;
 
     inputs.forEach(obj => {
-      obj.class = "null";
-    });
+        obj.class = "null";
+      });
 
     const subInputStructure = {
       id: this.generateNewId(),
@@ -159,8 +159,6 @@ export default class FormContainer extends Component {
 
     newStructure[i].question = question;
     newStructure[i].conditionType = type;
-    newStructure[i].class = "empty";
-
     if (firstConditionField) {
       newStructure[i].firstConditionField = firstConditionField;
     }

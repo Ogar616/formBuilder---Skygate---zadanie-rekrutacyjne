@@ -2,7 +2,7 @@ import React, { Component } from "react";
 
 export default class MainInput extends Component {
   state = {
-    question: "",
+    question: this.props.question,
     type: "Number"
   };
 
