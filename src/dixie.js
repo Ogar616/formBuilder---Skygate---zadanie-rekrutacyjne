@@ -1,8 +1,9 @@
-import Dexie from 'dexie';
+import Dexie from "dexie";
 
-const db = new Dexie('structures');
+const db = new Dexie("structures");
 db.version(1).stores({
-    structures: '++id, stateId, parentId, type, question, conditionType, firstConditionField, secondConditionField'
+  structures:
+    "++id, stateId, parentId, type, question, conditionType, firstConditionField, secondConditionField"
 });
 db.open();
 
